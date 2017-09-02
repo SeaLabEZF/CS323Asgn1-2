@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 	
 	//Variable Declaration
 	stack<int> myStack;
-	map<char, int> myMap;
+	map<string, int> myMap;
 	int value, tempValueOne, tempValueTwo;
 	string expr;
 	string::iterator myStringIt;
@@ -79,22 +79,25 @@ int main(int argc, char* argv[]) {
 		}
 
 		//Use string iterator to parse through the postfix statment
-		//for non-operation characters
+		//To find variable names
+		string nextString;
 		for (myStringIt = expr.begin(); myStringIt != expr.end(); ++myStringIt) {
-			
-			//Leaves for loop upon reaching '$'
-			if (*myStringIt == '$') { break; }
-			
-			//Checks if the current character is in the map
-			//if the character is not, the user is asked what
-			//the value of the character is.
-			if (!isOperator(*myStringIt) && myMap.find(*myStringIt) == myMap.end()) {
-				cout << "\tEnter the value of " << *myStringIt << ":";
-				
-				cin >> value;
-				cin.ignore();
-				myMap.emplace(*myStringIt, value);
+			//If a space, an operator, or $ is found prompt the user for the value
+			//Of the string that's been concatenating so far
+			if(isOperator(*myStringIt) || *myStringIt == ' ' || *myStringIt == '$') {
+				if(nextString.length() > 0) {
+					cout << "Enter the value of " << nextString << ":";
+					int value;
+					cin >> value;
+					cin.ignore();
+					myMap.emplace(nextString, value);
+					nextString.clear();
+				}
+				//If $ was found, stop looking
+				if(*myStringIt == '$") { break; }
 			}
+			//Otherwise, add this character to nextString
+			else { nextString += *myStringIt; }
 		}
 		
 		//Use string iterator to parse through postfix statment
@@ -102,9 +105,12 @@ int main(int argc, char* argv[]) {
 		//the stack if the character is an operator the operation is 
 		//done on the top two values on the stack, the result is pushed 
 		//back onto the stack
+		nextString.clear();
+		//TODO: change this section to assignment 2 version
 		for (myStringIt = expr.begin(); myStringIt != expr.end(); ++myStringIt) {
 			
-			//Leaves for loop upon reaching '$'
+			//Leaves for loop upon reaching '$', even if nextString isn't empty
+			//(because $ isn't an operator, so there would be nothing to do anyway)
 			if (*myStringIt == '$') { break; }
 
 			//Checks if current character is a non-operator
